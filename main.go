@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"os"
+	"os/signal"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -51,4 +52,20 @@ func init() {
 }
 func main() {
 	log.Info("buildy starting...")
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	defer func() {
+		signal.Stop(c)
+	}()
+
+	ticker := time.NewTicker(checkPeriod)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+		case <-c:
+			return
+		}
+	}
 }

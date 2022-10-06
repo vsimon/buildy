@@ -2,6 +2,8 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
@@ -16,12 +18,16 @@ const (
 var (
 	token     string
 	projectID int
+	url       string
+	branch    string
 	virtual   bool
 	verbose   bool
 )
 
 func init() {
 	flag.IntVar(&projectID, "p", 0, "GitLab project ID")
+	flag.StringVar(&url, "url", "https://gitlab.com", "GitLab server URL")
+	flag.StringVar(&branch, "branch", "master", "GitLab project branch")
 	flag.BoolVar(&virtual, "virtual", false, "enable virtual light")
 	flag.BoolVar(&verbose, "verbose", false, "enable verbose logging")
 	flag.Parse()
@@ -61,9 +67,19 @@ func main() {
 
 	ticker := time.NewTicker(checkPeriod)
 	defer ticker.Stop()
+
+	branchURL := fmt.Sprintf("%s/api/v4/projects/%d/repository/commits/%s?private_token=%s", url, projectID, branch, token)
+
 	for {
 		select {
 		case <-ticker.C:
+			log.WithField("URL", branchURL).Debug("Fetching")
+			resp, err := http.Get(branchURL)
+			if err != nil {
+				log.Warn(err)
+				continue
+			}
+			defer resp.Body.Close()
 		case <-c:
 			return
 		}

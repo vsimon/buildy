@@ -59,6 +59,13 @@ func init() {
 func main() {
 	log.Info("buildy starting...")
 
+	light := NewFakeLight()
+	err := light.Open()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer light.Close()
+
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
 	defer func() {

@@ -98,7 +98,10 @@ func main() {
 			}
 			log.WithField("object", fmt.Sprintf("%#v", build)).Debug("Decoded")
 			log.WithField("status", build.Status).Info()
-
+			switch build.Status {
+			case "success":
+				light.Toggle(Green)
+			}
 		case <-c:
 			return
 		}

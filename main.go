@@ -97,6 +97,7 @@ func main() {
 				continue
 			}
 			log.WithField("object", fmt.Sprintf("%#v", build)).Debug("Decoded")
+			log.WithField("status", build.Status).Info()
 
 		case <-c:
 			return

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"net/http"
@@ -87,6 +88,15 @@ func main() {
 				continue
 			}
 			defer resp.Body.Close()
+
+			var build struct {
+				Status string `json:"status"`
+			}
+			if err := json.NewDecoder(resp.Body).Decode(&build); err != nil {
+				log.Warn(err)
+				continue
+			}
+
 		case <-c:
 			return
 		}

@@ -96,6 +96,7 @@ func main() {
 				log.Warn(err)
 				continue
 			}
+			log.WithField("object", fmt.Sprintf("%#v", build)).Debug("Decoded")
 
 		case <-c:
 			return

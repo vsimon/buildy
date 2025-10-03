@@ -101,6 +101,8 @@ func main() {
 			switch build.Status {
 			case "success":
 				light.Toggle(Green)
+			case "canceled":
+				fallthrough
 			default:
 				light.Toggle(All)
 			}

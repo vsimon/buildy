@@ -101,6 +101,8 @@ func main() {
 			switch build.Status {
 			case "success":
 				light.Toggle(Green)
+			default:
+				light.Toggle(All)
 			}
 		case <-c:
 			return
